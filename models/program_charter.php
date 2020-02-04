@@ -104,7 +104,7 @@ class ProgramCharter
     {
         $getData = $this->callAPI('GET', '10.62.161.11/api/index.php/program_charter/get', false);
         $request = json_decode($getData);
-        $status_decode = json_decode($request->data->status);
+        $status_decode = json_decode($request->data['status']);
         die(print_r($status_decode));
     }
 
