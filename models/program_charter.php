@@ -59,24 +59,51 @@ class ProgramCharter
         return $msg;
     }
 
-    public function getAcceptedPC()
+    public function callAPI($method, $url, $data)
     {
         $curl = curl_init();
+        switch ($method) {
+            case "POST":
+                curl_setopt($curl, CURLOPT_POST, 1);
+                if ($data) {
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                }
 
-        curl_setopt_array(
-            $curl, array(
-                CURLOPT_URL => "10.62.161.11/api/index.php/users/get",
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "GET",
-            ));
+                break;
+            case "PUT":
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+                if ($data) {
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                }
 
-        die(print_r($curl));
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
+                break;
+            default:
+                if ($data) {
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+                }
 
+        }
+
+        // OPTIONS:
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            // 'x-authorization: ' . $this->apiKey,
+        ));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        // EXECUTE:
+        $result = curl_exec($curl);
+        // die("ini token" . $this->apiKey);
+        if (!$result) {die("Connection Failure");}
         curl_close($curl);
+        return $result;
+    }
+
+    public function getAcceptedPC()
+    {
+        $getData = $this->callAPI('GET', '10.62.161.11/api/index.php/program_charter/get', false);
+        die(print_r($getData));
 
     }
 

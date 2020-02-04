@@ -401,7 +401,6 @@ class Router
 
         $uri = rawurldecode($uri);
         $explodeUri = explode("/", $uri);
-        die(print_r($explodeUri));
         $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
         $connection = $this->core_connect();
 
