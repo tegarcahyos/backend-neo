@@ -201,45 +201,6 @@ class Router
             $r->post('/api/index.php/users/insert', 'User/insert');
             $r->post('/api/index.php/users/update/{id}', 'User/update');
 
-            // // --- MASTER DATA ---
-            // $r->get('/api/index.php/master_data/get', 'MasterData/get');
-            // $r->get('/api/index.php/master_data/find_id/{id}', 'MasterData/findById');
-            // $r->get('/api/index.php/master_data/delete/{id}', 'MasterData/delete');
-            // $r->post('/api/index.php/master_data/insert', 'MasterData/insert');
-            // $r->post('/api/index.php/master_data/update/{id}', 'MasterData/update');
-
-            // // --- DATA FROM MASTER ---
-            // $r->get('/api/index.php/data_from_master/get', 'DataMaster/get');
-            // $r->get('/api/index.php/data_from_master/find_id/{id}', 'DataMaster/findById');
-            // $r->get('/api/index.php/data_from_master/delete/{id}', 'DataMaster/delete');
-            // $r->post('/api/index.php/data_from_master/insert', 'DataMaster/insert');
-            // $r->post('/api/index.php/data_from_master/update/{id}', 'DataMaster/update');
-
-            // --- EXPERT JUDGEMENT ---
-            $r->get('/api/index.php/expert_judgement/get', 'ExpertJudgement/get');
-            $r->get('/api/index.php/expert_judgement/find_id/{id}', 'ExpertJudgement/findById');
-            $r->get('/api/index.php/expert_judgement/get_by_user/{user_id}', 'ExpertJudgement/findByUserId');
-            $r->get('/api/index.php/expert_judgement/delete/{id}', 'ExpertJudgement/delete');
-            $r->get('/api/index.php/expert_judgement/delete_by_user/{user_id}', 'ExpertJudgement/deleteByUserId');
-            $r->post('/api/index.php/expert_judgement/insert', 'ExpertJudgement/insert');
-            $r->post('/api/index.php/expert_judgement/update/{id}', 'ExpertJudgement/update');
-
-            // --- AHP ---
-            $r->get('/api/index.php/ahp_criteria/get', 'AHPCriteria/get');
-            $r->get('/api/index.php/ahp_criteria/find_id/{id}', 'AHPCriteria/findById');
-            $r->get('/api/index.php/ahp_criteria/delete/{id}', 'AHPCriteria/delete');
-            $r->post('/api/index.php/ahp_criteria/insert', 'AHPCriteria/insert');
-            $r->post('/api/index.php/ahp_criteria/update/{id}', 'AHPCriteria/update');
-
-            // --- QUADRAn ---
-            $r->get('/api/index.php/quadran/get', 'Quadran/get');
-            $r->get('/api/index.php/quadran/find_id/{id}', 'Quadran/findById');
-            $r->get('/api/index.php/quadran/get_by_user/{user_id}', 'Quadran/findByUserId');
-            $r->get('/api/index.php/quadran/delete/{id}', 'Quadran/delete');
-            $r->get('/api/index.php/quadran/delete_by_user/{user_id}', 'Quadran/deleteByUserId');
-            $r->post('/api/index.php/quadran/insert', 'Quadran/insert');
-            $r->post('/api/index.php/quadran/update/{id}', 'Quadran/update');
-
             // SI
             $r->get('/api/index.php/strategic_initiative/get', 'StraIn/get');
             $r->get('/api/index.php/strategic_initiative/find_id/{id}', 'StraIn/findById');
@@ -297,20 +258,6 @@ class Router
             $r->post('/api/index.php/user_detail/update/{id}', 'UserDetail/update');
             $r->post('/api/index.php/user_detail/update_user_id/{user_id}', 'UserDetail/update_user_id');
 
-            // Criteria Priority
-            $r->get('/api/index.php/criteria_priority/get', 'PriorityCriteria/get');
-            $r->get('/api/index.php/criteria_priority/find_id/{id}', 'PriorityCriteria/findById');
-            $r->get('/api/index.php/criteria_priority/delete/{id}', 'PriorityCriteria/delete');
-            $r->post('/api/index.php/criteria_priority/insert', 'PriorityCriteria/insert');
-            $r->post('/api/index.php/criteria_priority/update/{id}', 'PriorityCriteria/update');
-
-            // Data Priority
-            $r->get('/api/index.php/data_priority/get', 'PriorityData/get');
-            $r->get('/api/index.php/data_priority/find_id/{id}', 'PriorityData/findById');
-            $r->get('/api/index.php/data_priority/delete/{id}', 'PriorityData/delete');
-            $r->post('/api/index.php/data_priority/insert', 'PriorityData/insert');
-            $r->post('/api/index.php/data_priority/update/{id}', 'PriorityData/update');
-
             // Program Charter
             $r->get('/api/index.php/program_charter/get', 'ProgramCharter/get');
             $r->get('/api/index.php/program_charter/find_id/{id}', 'ProgramCharter/findById');
@@ -318,13 +265,6 @@ class Router
             $r->get('/api/index.php/program_charter/delete/{id}', 'ProgramCharter/delete');
             $r->post('/api/index.php/program_charter/insert', 'ProgramCharter/insert');
             $r->post('/api/index.php/program_charter/update/{id}', 'ProgramCharter/update');
-
-            // // METRIC
-            // $r->get('/api/index.php/metric/get', 'Metric/get');
-            // $r->get('/api/index.php/metric/find_id/{id}', 'Metric/findById');
-            // $r->get('/api/index.php/metric/delete/{id}', 'Metric/delete');
-            // $r->post('/api/index.php/metric/insert', 'Metric/insert');
-            // $r->post('/api/index.php/metric/update/{id}', 'Metric/update');
 
             // ROLE
             $r->get('/api/index.php/role/get', 'Role/get');
@@ -373,14 +313,6 @@ class Router
             $r->get('/api/index.php/unit/delete/{id}', 'Unit/delete');
             $r->post('/api/index.php/unit/insert', 'Unit/insert');
             $r->post('/api/index.php/unit/update/{id}', 'Unit/update');
-
-            // // OBJECT DATA
-            // $r->get('/api/index.php/{tablename}/select_all_get', 'ObjectData/select_all_get');
-            // $r->get('/api/index.php/{tablename}/select_id_get/{id}', 'ObjectData/select_id_get');
-            // $r->get('/api/index.php/{tablename}/select_where_get/{attr}/{val}', 'ObjectData/select_where_get');
-            // $r->get('/api/index.php/{tablename}/delete_all_get/{id}', 'ObjectData/delete_all_get');
-            // $r->post('/api/index.php/{tablename}/insert_object', 'ObjectData/insert');
-            // $r->post('/api/index.php/{tablename}/update_id/{id}', 'ObjectData/update_id');
 
             // MATRIX
             $r->get('/api/index.php/matrix/get', 'Matrix/get');
@@ -475,6 +407,7 @@ class Router
         }
 
         $uri = rawurldecode($uri);
+        die(print_r($uri));
         $explodeUri = explode("/", $uri);
         $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
         $connection = $this->core_connect();
@@ -575,7 +508,7 @@ class Router
                     $explodeUri[4] == "get_by_periode_id"
                 ) {
                     $result = call_user_func_array(array(new $class($connection), $method), array($vars['periode_id'], $explodeUri[3]));
-                }else if (
+                } else if (
                     $explodeUri[4] == "download"
                 ) {
                     $result = call_user_func_array(array(new $class($connection), $method), array($vars['id_file'], $explodeUri[3]));
