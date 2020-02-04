@@ -45,7 +45,7 @@ class ProgramCharter
                     'key_asks' => json_decode($key_asks),
                     'risks' => $risks,
                     'status' => $status,
-                    'generator_id' => $generator_id
+                    'generator_id' => $generator_id,
                 );
 
                 array_push($data_arr, $data_item);
@@ -57,6 +57,30 @@ class ProgramCharter
         }
 
         return $msg;
+    }
+
+    public function getAcceptedPC()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array(
+            $curl, array(
+                CURLOPT_URL => "10.62.161.11/api/index.php/users/get",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                    "cache-control: no-cache",
+                ),
+            ));
+
+        $response = curl_exec($curl);
+        die(print_r($response));
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
     }
 
     public function findById($id, $tablename)
@@ -87,7 +111,7 @@ class ProgramCharter
                 'key_asks' => json_decode($key_asks),
                 'risks' => $risks,
                 'status' => $status,
-                'generator_id' => $generator_id
+                'generator_id' => $generator_id,
             );
             return $data_item;
         }

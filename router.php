@@ -252,6 +252,7 @@ class Router
 
             // Program Charter
             $r->get('/api-neotransformer/index.php/program_charter/get', 'ProgramCharter/get');
+            $r->get('/api-neotransformer/index.php/program_charter/get_accepted', 'ProgramCharter/getAcceptedPC');
             $r->get('/api-neotransformer/index.php/program_charter/find_id/{id}', 'ProgramCharter/findById');
 
             $r->get('/api-neotransformer/index.php/program_charter/delete/{id}', 'ProgramCharter/delete');
