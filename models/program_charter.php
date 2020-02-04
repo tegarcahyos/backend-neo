@@ -103,8 +103,8 @@ class ProgramCharter
     public function getAcceptedPC()
     {
         $getData = $this->callAPI('GET', '10.62.161.11/api/index.php/program_charter/get', false);
-        die("HALO SU");
-
+        $request = json_decode($getData);
+        die(print_r($request));
     }
 
     public function findById($id, $tablename)
