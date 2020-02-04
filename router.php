@@ -254,7 +254,6 @@ class Router
             $r->get('/api-neotransformer/index.php/program_charter/get', 'ProgramCharter/get');
             $r->get('/api-neotransformer/index.php/program_charter/get_accepted', 'ProgramCharter/getAcceptedPC');
             $r->get('/api-neotransformer/index.php/program_charter/find_id/{id}', 'ProgramCharter/findById');
-
             $r->get('/api-neotransformer/index.php/program_charter/delete/{id}', 'ProgramCharter/delete');
             $r->post('/api-neotransformer/index.php/program_charter/insert', 'ProgramCharter/insert');
             $r->post('/api-neotransformer/index.php/program_charter/update/{id}', 'ProgramCharter/update');
@@ -522,6 +521,7 @@ class Router
                     $explodeUri[4] == "select_all_group_chat" ||
                     $explodeUri[4] == "insert_group_chat" ||
                     $explodeUri[4] == "get" ||
+                    $explodeUri[4] == "get_accepted" ||
                     $explodeUri[4] == "insert" ||
                     $explodeUri[4] == "upload" ||
                     $explodeUri[4] == "insert_alignment" ||
