@@ -106,7 +106,7 @@ class ProgramCharter
         $request = json_decode($getData);
         $status_decode = json_decode($request->data[0]->status);
         // die(print_r($status_decode->status));
-        if ($status_decode->status == 'reviewed') {
+        if ($status_decode->status == 'accepted') {
             return $request;
         } else {
             return "Data Kosong";
