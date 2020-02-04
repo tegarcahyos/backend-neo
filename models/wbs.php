@@ -1,6 +1,6 @@
 <?php
 
-class ConfigGann
+class WBS
 {
     public $db;
 
