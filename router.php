@@ -22,7 +22,6 @@ include "models/si_target.php";
 include "models/unit_target.php";
 include "models/upload_file.php";
 include "models/approval.php";
-include "models/reviewer_plan.php";
 include "models/periode.php";
 include "models/tara.php";
 include "login.php";
@@ -227,13 +226,6 @@ class Router
             $r->get('/api/index.php/approval/delete/{id}', 'Approval/delete');
             $r->post('/api/index.php/approval/insert', 'Approval/insert');
             $r->post('/api/index.php/approval/update/{id}', 'Approval/update');
-
-            // Reviewer Plan
-            $r->get('/api/index.php/reviewer_plan/get', 'ReviewerPlan/get');
-            $r->get('/api/index.php/reviewer_plan/find_id/{id}', 'ReviewerPlan/findById');
-            $r->get('/api/index.php/reviewer_plan/delete/{id}', 'ReviewerPlan/delete');
-            $r->post('/api/index.php/reviewer_plan/insert', 'ReviewerPlan/insert');
-            $r->post('/api/index.php/reviewer_plan/update/{id}', 'ReviewerPlan/update');
 
             // Tara
             $r->get('/api/index.php/tara/get', 'Tara/get');
