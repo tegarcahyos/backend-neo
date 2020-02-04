@@ -105,97 +105,9 @@ class ProgramCharter
         $getData = $this->callAPI('GET', '10.62.161.11/api/index.php/program_charter/get', false);
         $request = json_decode($getData);
         $status_decode = json_decode($request->data[0]->status);
-        die(print_r($request->data[0]->title));
+        // die(print_r($status_decode->status));
         if ($status_decode->status == 'accepted') {
-            $title = $request->data[0]->title;
-            $code = $request->data[0]->code;
-            $strategic_initiative = $request->data[0]->strategic_initiative;
-            $cfu_fu = $request->data[0]->cfu_fu;
-            $weight = $request->data[0]->weight;
-            $matrix = $request->data[0]->matrix;
-            $description = $request->data[0]->description;
-            $refer_to = json_encode($request->data[0]->refer_to);
-            $stakeholders = json_encode($request->data[0]->stakeholders);
-            $kpi = json_encode($request->data[0]->kpi);
-            $budget = json_encode($request->data[0]->budget);
-            $main_activities = json_encode($request->data[0]->main_activities);
-            $key_asks = json_encode($request->data[0]->key_asks);
-            $risks = $request->data[0]->risks;
-            $status = $request->data[0]->status;
-            $generator_id = $request->data[0]->generator_id;
-
-            if (empty($description)) {
-                $description = 'NULL';
-            }
-            if (empty($risks)) {
-                $risks = 'NULL';
-            }
-            if (empty($approval)) {
-                $approval = 'NULL';
-            }
-
-            $query = "INSERT INTO $tablename (
-        title,
-        code,
-        strategic_initiative,
-        cfu_fu,
-        weight,
-        matrix,
-        description,
-        refer_to,
-        stakeholders,
-        kpi,
-        budget,
-        main_activities,
-        key_asks,
-        risks,
-        status,
-        generator_id)";
-            $query .= "VALUES (
-            '$title',
-            '$code',
-            '$strategic_initiative',
-            '$cfu_fu',
-            '$weight',
-            '$matrix',
-            NULLIF('$description', 'NULL'),
-            '$refer_to',
-            '$stakeholders',
-            '$kpi',
-            '$budget',
-            '$main_activities',
-            '$key_asks',
-            NULLIF('$risks', 'NULL'),
-            '$status',
-            '$generator_id'
-            ) RETURNING *";
-            // die($query);
-            $result = $this->db->execute($query);
-            $num = $result->rowCount();
-
-            // jika ada hasil
-            if ($num > 0) {
-
-                $data_arr = array();
-
-                while ($row = $result->fetchRow()) {
-                    extract($row);
-
-                    // Push to data_arr
-
-                    $data_item = array(
-                        'id' => $id,
-                    );
-
-                    array_push($data_arr, $data_item);
-                    $msg = $data_arr;
-                }
-
-            } else {
-                $msg = 'Data Kosong';
-            }
-
-            return $msg;
+            return $request;
         } else {
             return "Data Kosong";
         }
