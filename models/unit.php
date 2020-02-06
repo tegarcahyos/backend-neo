@@ -29,12 +29,11 @@ class Unit
 
                 $data_item = array(
                     'id' => $id,
-                    'organization_name' => $organization_name,
-                    'organization_code' => $organization_code,
+                    'organization_id' => $organization_id,
+                    'cfu_fu_id' => $cfu_fu_id,
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
-                    'organization_id' => $organization_id,
                 );
 
                 array_push($data_arr, $data_item);
@@ -151,13 +150,12 @@ class Unit
                 // $this->getParentUnitBy($parent_id);
                 $data_item = array(
                     'id' => $id,
-                    'organization_name' => $organization_name,
-                    'organization_code' => $organization_code,
+                    'organization_id' => $organization_id,
+                    'cfu_fu_id' => $cfu_fu_id,
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
                     // 'parent_list' => $this->parentArray,
-                    'organization_id' => $organization_id,
                 );
 
                 array_push($data_arr, $data_item);
@@ -192,8 +190,7 @@ class Unit
                 $data_item = array(
                     'id' => $id,
                     'organization_id' => $organization_id,
-                    'organization_name' => $organization_name,
-                    'organization_code' => $organization_code,
+                    'cfu_fu_id' => $cfu_fu_id,
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
@@ -216,9 +213,7 @@ class Unit
         $query = "SELECT
            *
           FROM
-             $tablename WHERE organization_id = '$org_id'
-          ORDER BY
-            id ASC";
+             $tablename WHERE organization_id = '$org_id'";
 
         $result = $this->db->execute($query);
 
@@ -234,8 +229,7 @@ class Unit
                 $data_item = array(
                     'id' => $id,
                     'organization_id' => $organization_id,
-                    'organization_name' => $organization_name,
-                    'organization_code' => $organization_code,
+                    'cfu_fu_id' => $cfu_fu_id,
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
@@ -266,8 +260,7 @@ class Unit
             $data_item = array(
                 'id' => $id,
                 'organization_id' => $organization_id,
-                'organization_name' => $organization_name,
-                'organization_code' => $organization_code,
+                'cfu_fu_id' => $cfu_fu_id,
                 'parent_id' => $parent_id,
                 'name' => $name,
                 'code' => $code,
@@ -284,16 +277,15 @@ class Unit
         $request = json_decode($data);
         // die(json_encode($request));
         $organization_id = $request[0]->organization_id;
-        $organization_name = $request[0]->organization_name;
-        $organization_code = $request[0]->organization_code;
+        $cfu_fu_id = $request[0]->cfu_fu_id;
         $parent_id = $request[0]->parent_id;
         $name = $request[0]->name;
         $code = $request[0]->code;
 
         $query = "INSERT INTO $tablename (
-            parent_id, name, code, organization_id, organization_code, organization_name)";
+            parent_id, name, code, organization_id, cfu_fu_id)";
         $query .= "VALUES (
-            '$parent_id' , '$name', '$code','$organization_id','$organization_code','$organization_name') RETURNING *";
+            '$parent_id' , '$name', '$code','$organization_id','$cfu_fu_id') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
         $num = $result->rowCount();
@@ -309,8 +301,7 @@ class Unit
                 $data_item = array(
                     'id' => $id,
                     'organization_id' => $organization_id,
-                    'organization_name' => $organization_name,
-                    'organization_code' => $organization_code,
+                    'cfu_fu_id' => $cfu_fu_id,
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
@@ -331,14 +322,13 @@ class Unit
     {
         $data = file_get_contents("php://input");
         $request = json_decode($data);
-        $organization_name = $request[0]->organization_name;
-        $organization_code = $request[0]->organization_code;
+        $organization_id = $request[0]->organization_id;
+        $cfu_fu_id = $request[0]->cfu_fu_id;
         $parent_id = $request[0]->parent_id;
         $name = $request[0]->name;
         $code = $request[0]->code;
-        $organization_id = $request[0]->organization_id;
 
-        $query = "UPDATE $tablename SET name = '$name', code = '$code',parent_id = '$parent_id', organization_id = '$organization_id', organization_code = '$organization_code', organization_name = '$organization_name' WHERE id = '$id' RETURNING *";
+        $query = "UPDATE $tablename SET name = '$name', code = '$code',parent_id = '$parent_id', organization_id = '$organization_id', cfu_fu_id = '$cfu_fu_id' WHERE id = '$id' RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
         $num = $result->rowCount();
@@ -354,8 +344,7 @@ class Unit
                 $data_item = array(
                     'id' => $id,
                     'organization_id' => $organization_id,
-                    'organization_name' => $organization_name,
-                    'organization_code' => $organization_code,
+                    'cfu_fu_id' => $cfu_fu_id,
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
@@ -385,19 +374,49 @@ class Unit
             select unit_id::text from unit_target
             union all
             select unit_id::text from user_detail
-			union all
-            select parent_id::text from unit
         ) a
         where unit_id = '$id')";
+        // die($get_refs);
         $result = $this->db->execute($get_refs);
         $row = $result->fetchRow();
         if ($row['exists'] == 't') {
             return "403";
         } else {
-            $query = "DELETE FROM $tablename WHERE id = '$id'";
-            // die($query);
-            $result = $this->db->execute($query);
-            // return $result;
+            $select = "WITH RECURSIVE tree (id) as
+            (SELECT unit.id, unit.parent_id, unit.name from unit where id='$id'
+              UNION ALL
+              SELECT unit.id, unit.parent_id, unit.name from tree, unit where unit.parent_id = tree.id::varchar)
+            SELECT * FROM tree;";
+            // die($select);
+            $result = $this->db->execute($select);
+            $num = $result->rowCount();
+
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    // Push to data_arr
+
+                    $data_item = array(
+                        'id' => $id,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            } else {
+                $msg = 'Data Kosong';
+            }
+
+            for ($i = 0; $i < count($msg); $i++) {
+                $query = "DELETE FROM $tablename WHERE id = '" . $msg[$i]['id'] . "'";
+                $this->db->execute($query);
+            }
+
             $res = $this->db->affected_rows();
 
             if ($res == true) {
@@ -405,6 +424,7 @@ class Unit
             } else {
                 return $msg = array("message" => 'Data tidak ditemukan', "code" => 400);
             }
+
         }
     }
 }
