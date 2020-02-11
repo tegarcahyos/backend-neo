@@ -73,39 +73,46 @@ class SITarget
         //
         $request = json_decode($data);
 
-        $si_id = $request[0]->si_id;
-        $kpi_id = $request[0]->kpi_id;
-        $target = $request[0]->target;
+        $variable = array('si_id', 'kpi_id', 'target');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
+
+            $$item = $request[0]->{$item};
+        }
 
         $query = 'INSERT INTO ' . $tablename . ' (si_id, kpi_id, target) ';
         $query .= "VALUES ('$si_id','$kpi_id', '$target') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-        $num = $result->rowCount();
-
-        // jika ada hasil
-        if ($num > 0) {
-
-            $data_arr = array();
-
-            while ($row = $result->fetchRow()) {
-                extract($row);
-
-                // Push to data_arr
-
-                $data_item = array(
-                    'id' => $id,
-                    'si_id' => $si_id,
-                    'kpi_id' => $kpi_id,
-                    'target' => $target,
-                );
-
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
-            }
-
+        if (empty($result)) {
+            return "402";
         } else {
-            $msg = 'Data Kosong';
+            $num = $result->rowCount();
+
+            // jika ada hasil
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    // Push to data_arr
+
+                    $data_item = array(
+                        'id' => $id,
+                        'si_id' => $si_id,
+                        'kpi_id' => $kpi_id,
+                        'target' => $target,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
         }
 
         return $msg;
@@ -119,40 +126,47 @@ class SITarget
         $data = file_get_contents("php://input");
 
         $request = json_decode($data);
-        $si_id = $request[0]->si_id;
-        $kpi_id = $request[0]->kpi_id;
-        $target = $request[0]->target;
+        $variable = array('si_id', 'kpi_id', 'target');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
+
+            $$item = $request[0]->{$item};
+        }
 
         $query = "UPDATE $tablename SET si_id = '$si_id', kpi_id = '$kpi_id',target = '$target' WHERE id = '$id' RETURNING *";
 
         // die($query);
 
         $result = $this->db->execute($query);
-        $num = $result->rowCount();
-
-        // jika ada hasil
-        if ($num > 0) {
-
-            $data_arr = array();
-
-            while ($row = $result->fetchRow()) {
-                extract($row);
-
-                // Push to data_arr
-
-                $data_item = array(
-                    'id' => $id,
-                    'si_id' => $si_id,
-                    'kpi_id' => $kpi_id,
-                    'target' => $target,
-                );
-
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
-            }
-
+        if (empty($result)) {
+            return "402";
         } else {
-            $msg = 'Data Kosong';
+            $num = $result->rowCount();
+
+            // jika ada hasil
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    // Push to data_arr
+
+                    $data_item = array(
+                        'id' => $id,
+                        'si_id' => $si_id,
+                        'kpi_id' => $kpi_id,
+                        'target' => $target,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
         }
 
         return $msg;

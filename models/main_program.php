@@ -33,6 +33,7 @@ class MainProgram
                     'title' => $title,
                     'code' => $code,
                     'unit_id' => $unit_id,
+                    'periode_id' => $periode_id,
                 );
 
                 array_push($data_arr, $data_item);
@@ -62,6 +63,7 @@ class MainProgram
                 'title' => $title,
                 'code' => $code,
                 'unit_id' => $unit_id,
+                'periode_id' => $periode_id,
             );
             return $data_item;
         }
@@ -73,23 +75,46 @@ class MainProgram
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $title = $request[0]->title;
-        $code = $request[0]->code;
-        $unit_id = $request[0]->unit_id;
-        $query = "INSERT INTO $tablename (title, code, unit_id)";
-        $query .= "VALUES ('$title', '$code','$unit_id')";
-        // die($query);
-        $result = $this->db->execute($query);
-        $num = $result->rowCount();
+        $variable = array('title', 'code', 'unit_id', 'periode_id');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
 
-        $res = $this->db->affected_rows();
-
-        if ($res == true) {
-            return $msg = array("message" => 'Data Berhasil Ditambah', "code" => 200);
-        } else {
-            return $msg = array("message" => 'Data tidak ditemukan', "code" => 400);
+            $$item = $request[0]->{$item};
         }
 
+        $query = "INSERT INTO $tablename (title, code, unit_id, periode_id)";
+        $query .= "VALUES ('$title', '$code','$unit_id','$periode_id') RETURNING *";
+
+        $result = $this->db->execute($query);
+        if (empty($result)) {
+            return "402";
+        } else {
+            $num = $result->rowCount();
+
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    $data_item = array(
+                        'id' => $id,
+                        'title' => $title,
+                        'code' => $code,
+                        'unit_id' => $unit_id,
+                        'periode_id' => $periode_id,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
+        }
+        return $msg;
     }
 
     public function update($id, $tablename)
@@ -98,20 +123,46 @@ class MainProgram
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $title = $request[0]->title;
-        $code = $request[0]->code;
-        $unit_id = $request[0]->unit_id;
-        $query = "UPDATE $tablename SET title = '$title', unit_id = '$unit_id', code = '$code' WHERE id = '$id'";
+
+        $variable = array('title', 'code', 'unit_id', 'periode_id');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
+
+            $$item = $request[0]->{$item};
+        }
+
+        $query = "UPDATE $tablename SET title = '$title', unit_id = '$unit_id', code = '$code', periode_id = '$periode_id' WHERE id = '$id' RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-
-        $res = $this->db->affected_rows();
-
-        if ($res == true) {
-            return $msg = array("message" => 'Data berhasil diperbaharui', "code" => 200);
+        if (empty($result)) {
+            return "402";
         } else {
-            return $msg = array("message" => 'Data tidak ditemukan', "code" => 400);
+            $num = $result->rowCount();
+
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    $data_item = array(
+                        'id' => $id,
+                        'title' => $title,
+                        'code' => $code,
+                        'unit_id' => $unit_id,
+                        'periode_id' => $periode_id,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
         }
+        return $msg;
     }
 
     public function delete($id, $tablename)

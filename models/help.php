@@ -1,6 +1,5 @@
 <?php
-
-class Role
+class Help
 {
     public $db;
 
@@ -30,6 +29,7 @@ class Role
                 $data_item = array(
                     'id' => $id,
                     'name' => $name,
+                    'description' => $description,
                 );
 
                 array_push($data_arr, $data_item);
@@ -57,6 +57,7 @@ class Role
             $data_item = array(
                 'id' => $id,
                 'name' => $name,
+                'description' => $description,
             );
             return $data_item;
         }
@@ -66,91 +67,27 @@ class Role
     {
         // get data input from frontend
         $data = file_get_contents("php://input");
-        //
         $request = json_decode($data);
-        $variable = array('name');
-        foreach ($variable as $item) {
-            if (!isset($request[0]->{$item})) {
-                return "402";
-            }
+        $name = $request[0]->name;
+        $description = $request[0]->description;
 
-            $$item = $request[0]->{$item};
-        }
-
-        $query = "INSERT INTO $tablename (name)";
-        $query .= "VALUES ('$name') RETURNING *";
+        $query = "INSERT INTO $tablename (name, description)";
+        $query .= "VALUES ('$name','$description')";
         // die($query);
-        $result = $this->db->execute($query);
-        if (empty($result)) {
-            return "402";
-        } else {
-            $num = $result->rowCount();
+        return $this->db->execute($query);
 
-            if ($num > 0) {
-
-                $data_arr = array();
-
-                while ($row = $result->fetchRow()) {
-                    extract($row);
-
-                    $data_item = array(
-                        'id' => $id,
-                        'name' => $name,
-                    );
-
-                    array_push($data_arr, $data_item);
-                    $msg = $data_arr;
-                }
-
-            }
-        }
-
-        return $msg;
     }
 
     public function update($id, $tablename)
     {
-        // get data input from frontend
         $data = file_get_contents("php://input");
-        //
         $request = json_decode($data);
-        $variable = array('name');
-        foreach ($variable as $item) {
-            if (!isset($request[0]->{$item})) {
-                return "402";
-            }
+        $name = $request[0]->name;
+        $description = $request[0]->description;
 
-            $$item = $request[0]->{$item};
-        }
-
-        $query = "UPDATE $tablename  SET name = '$name ' WHERE id = '$id' RETURNING *";
+        $query = "UPDATE $tablename SET name = '$name', description = '$description' WHERE id = '$id'";
         // die($query);
-        $result = $this->db->execute($query);
-        if (empty($result)) {
-            return "402";
-        } else {
-            $num = $result->rowCount();
-
-            if ($num > 0) {
-
-                $data_arr = array();
-
-                while ($row = $result->fetchRow()) {
-                    extract($row);
-
-                    $data_item = array(
-                        'id' => $id,
-                        'name' => $name,
-                    );
-
-                    array_push($data_arr, $data_item);
-                    $msg = $data_arr;
-                }
-
-            }
-        }
-
-        return $msg;
+        return $this->db->execute($query);
     }
 
     public function delete($id, $tablename)

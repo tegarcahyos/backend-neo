@@ -130,16 +130,33 @@ class User
         $query .= "VALUES ('$name', '$email', $phone ,'$username', '$password_hash') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-        $row = $result->fetchRow();
-        extract($row);
-        $data_item = array(
-            'id' => $id,
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
-            'username' => $username,
-        );
-        return $data_item;
+        if (empty($result)) {
+            return "402";
+        } else {
+            $num = $result->rowCount();
+
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    $data_item = array(
+                        'id' => $id,
+                        'name' => $name,
+                        'email' => $email,
+                        'phone' => $phone,
+                        'username' => $username,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
+        }
+        return $msg;
 
     }
 
@@ -158,7 +175,34 @@ class User
 
         $query = "UPDATE $tablename SET name = '$name', email = '$email', phone = '$phone', username = ' $username' WHERE id = '$id'";
         // die($query);
-        return $this->db->execute($query);
+        $result = $this->db->execute($query);
+        if (empty($result)) {
+            return "402";
+        } else {
+            $num = $result->rowCount();
+
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    $data_item = array(
+                        'id' => $id,
+                        'name' => $name,
+                        'email' => $email,
+                        'phone' => $phone,
+                        'username' => $username,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
+        }
+        return $msg;
     }
 
     public function delete($id, $tablename)

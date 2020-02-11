@@ -274,13 +274,16 @@ class Unit
         // get data input from frontend
         $data = file_get_contents("php://input");
         //
+
         $request = json_decode($data);
-        // die(json_encode($request));
-        $organization_id = $request[0]->organization_id;
-        $cfu_fu_id = $request[0]->cfu_fu_id;
-        $parent_id = $request[0]->parent_id;
-        $name = $request[0]->name;
-        $code = $request[0]->code;
+        $variable = array('organization_id', 'cfu_fu_id', 'parent_id', 'name', 'code');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
+
+            $$item = $request[0]->{$item};
+        }
 
         $query = "INSERT INTO $tablename (
             parent_id, name, code, organization_id, cfu_fu_id)";
@@ -288,31 +291,33 @@ class Unit
             '$parent_id' , '$name', '$code','$organization_id','$cfu_fu_id') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-        $num = $result->rowCount();
-        if ($num > 0) {
-
-            $data_arr = array();
-
-            while ($row = $result->fetchRow()) {
-                extract($row);
-
-                // Push to data_arr
-
-                $data_item = array(
-                    'id' => $id,
-                    'organization_id' => $organization_id,
-                    'cfu_fu_id' => $cfu_fu_id,
-                    'parent_id' => $parent_id,
-                    'name' => $name,
-                    'code' => $code,
-                );
-
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
-            }
-
+        if (empty($result)) {
+            return "402";
         } else {
-            $msg = 'Data Kosong';
+            $num = $result->rowCount();
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    // Push to data_arr
+
+                    $data_item = array(
+                        'id' => $id,
+                        'organization_id' => $organization_id,
+                        'cfu_fu_id' => $cfu_fu_id,
+                        'parent_id' => $parent_id,
+                        'name' => $name,
+                        'code' => $code,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
         }
 
         return $msg;
@@ -322,40 +327,46 @@ class Unit
     {
         $data = file_get_contents("php://input");
         $request = json_decode($data);
-        $organization_id = $request[0]->organization_id;
-        $cfu_fu_id = $request[0]->cfu_fu_id;
-        $parent_id = $request[0]->parent_id;
-        $name = $request[0]->name;
-        $code = $request[0]->code;
+
+        $variable = array('organization_id', 'cfu_fu_id', 'parent_id', 'name', 'code');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
+
+            $$item = $request[0]->{$item};
+        }
 
         $query = "UPDATE $tablename SET name = '$name', code = '$code',parent_id = '$parent_id', organization_id = '$organization_id', cfu_fu_id = '$cfu_fu_id' WHERE id = '$id' RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-        $num = $result->rowCount();
-        if ($num > 0) {
-
-            $data_arr = array();
-
-            while ($row = $result->fetchRow()) {
-                extract($row);
-
-                // Push to data_arr
-
-                $data_item = array(
-                    'id' => $id,
-                    'organization_id' => $organization_id,
-                    'cfu_fu_id' => $cfu_fu_id,
-                    'parent_id' => $parent_id,
-                    'name' => $name,
-                    'code' => $code,
-                );
-
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
-            }
-
+        if (empty($result)) {
+            return "402";
         } else {
-            $msg = 'Data Kosong';
+            $num = $result->rowCount();
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    // Push to data_arr
+
+                    $data_item = array(
+                        'id' => $id,
+                        'organization_id' => $organization_id,
+                        'cfu_fu_id' => $cfu_fu_id,
+                        'parent_id' => $parent_id,
+                        'name' => $name,
+                        'code' => $code,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
         }
 
         return $msg;

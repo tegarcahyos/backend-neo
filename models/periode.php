@@ -169,84 +169,28 @@ class Periode
         $status_active = $request[0]->status_active;
         $organization_id = $request[0]->organization_id;
 
-        // $query_select_status = " SELECT id from $tablename where organization_id = '$organization_id' and status_active = '$status_active'";
+        $set_false = "UPDATE $tablename SET status_active = false WHERE organization_id = '$organization_id'";
+        $this->db->execute($set_false);
 
-        // $result_select = $this->db->execute($query_select_status);
-
-        // $num = $result_select->rowCount();
-
-        // if ($num > 0) {
-
-        //     // $data_arr = array();
-
-        //     while ($row = $result_select->fetchRow()) {
-        //         extract($row);
-
-        //         $data_item = array(
-        //             'id' => $id,
-
-        //         );
-
-        //         // array_push($data_item);
-        //         $msg_item = $data_item;
-        //     }
-        //     $id_periode = implode('', $msg_item);
-
-        //     if ($status_active == true) {
-        //         $query_set_status = "UPDATE $tablename SET status_active = 'false' where id = '$id_periode'";
-        //         // die($query_set_status);
-        //         $this->db->execute($query_set_status);
-
-        //     } else {
-        //         $query_set_status = "UPDATE $tablename SET status_active = 'true' where id = '$id_periode'";
-        //         // die($query_set_status);
-        //         $this->db->execute($query_set_status);
-        //     }
-
-        // }
-        $msg = "";
-        if ($status_active == 't') {
-            $query = "UPDATE $tablename SET name = '$name',  code = '$code' ,organization_id = '$organization_id' WHERE id = '$idP' RETURNING *";
-            $result = $this->db->execute($query);
-            $row = $result->fetchRow();
-            if (is_bool($row)) {
-                $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
-            } else {
-                extract($row);
-
-                $msg = array(
-                    'id' => $id,
-                    'name' => $name,
-                    'code' => $code,
-                    'status_active' => $status_active,
-                    'organization_id' => $organization_id,
-                );
-            }
-            $update_periode_active =
-                "UPDATE periode_active SET periode_id = '" . $row['id'] . "', periode_name = '" . $row['name'] . "' WHERE id = 1;
-                INSERT INTO periode_active (periode_id, periode_name) SELECT '" . $row['id'] . "', '" . $row['name'] . "' WHERE NOT EXISTS(SELECT 1 FROM periode_active WHERE id=1)";
-            // die($update_periode_active);
-            $this->db->execute($update_periode_active);
-
+        $activate = "UPDATE $tablename SET name = '$name',  code = '$code' ,organization_id = '$organization_id', status_active = '$status_active' WHERE id = '$idP' RETURNING *";
+        // die($activate);
+        $result = $this->db->execute($activate);
+        $row = $result->fetchRow();
+        if (is_bool($row)) {
+            $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
+            return $msg;
         } else {
-            $query = "UPDATE $tablename SET name = '$name',  code = '$code' ,organization_id = '$organization_id' WHERE id = '$idP'";
-            $result = $this->db->execute($query);
-            if (is_bool($row)) {
-                $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
-            } else {
-                extract($row);
+            extract($row);
 
-                $msg = array(
-                    'id' => $id,
-                    'name' => $name,
-                    'code' => $code,
-                    'status_active' => $status_active,
-                    'organization_id' => $organization_id,
-                );
-            }
+            $data_item = array(
+                'id' => $idP,
+                'name' => $name,
+                'code' => $code,
+                'status_active' => $status_active,
+                'organization_id' => $organization_id,
+            );
+            return $data_item;
         }
-
-        return $msg;
     }
 
     public function delete($id, $tablename)

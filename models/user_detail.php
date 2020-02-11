@@ -27,12 +27,8 @@ class UserDetail
                 $data_item = array(
                     'id' => $id,
                     'user_id' => $user_id,
-                    'user_name' => $user_name,
                     'unit_id' => $unit_id,
-                    'unit_code' => $unit_code,
-                    'unit_name' => $unit_name,
                     'role_id' => $role_id,
-                    'role_name' => $role_name,
                     'user_avatar'=>$user_avatar,
                 );
 
@@ -63,12 +59,8 @@ class UserDetail
             $data_item = array(
                 'id' => $id,
                 'user_id' => $user_id,
-                'user_name' => $user_name,
                 'unit_id' => $unit_id,
-                'unit_code' => $unit_code,
-                'unit_name' => $unit_name,
                 'role_id' => $role_id,
-                'role_name' => $role_name,
                 'user_avatar'=>$user_avatar,
             );
 
@@ -78,14 +70,14 @@ class UserDetail
     }
 
     public function getByUser($user_id, $tablename)
-    {
+    { 
         $query = "SELECT * FROM $tablename WHERE user_id = '$user_id'";
         $result = $this->db->execute($query);
-        if (empty($result)) {
-            $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
+        $row = $result->fetchRow();
+        if (empty($row)) {
+            $msg = "Data Kosong";
             return $msg;
         } else {
-            $row = $result->fetchRow();
             extract($row);
 
             // Push to data_arr
@@ -93,12 +85,8 @@ class UserDetail
             $data_item = array(
                 'id' => $id,
                 'user_id' => $user_id,
-                'user_name' => $user_name,
                 'unit_id' => $unit_id,
-                'unit_code' => $unit_code,
-                'unit_name' => $unit_name,
                 'role_id' => $role_id,
-                'role_name' => $role_name,
                 'user_avatar'=>$user_avatar,
             );
 
@@ -114,27 +102,15 @@ class UserDetail
         $request = json_decode($data);
 
         $user_id = $request[0]->user_id;
-        $user_name = $request[0]->user_name;
         $unit_id = $request[0]->unit_id;
-        $unit_code = $request[0]->unit_code;
-        $unit_name = $request[0]->unit_name;
         $role_id = $request[0]->role_id;
-        $role_name = $request[0]->role_name;
 
         $query = 'INSERT INTO ' . $tablename . ' (user_id,
-        user_name,
         unit_id,
-        unit_code,
-        unit_name,
-        role_id,
-        role_name) ';
+        role_id,) ';
         $query .= "VALUES ('$user_id',
-        '$user_name',
         '$unit_id',
-        '$unit_code',
-        '$unit_name',
-        '$role_id',
-        '$role_name') RETURNING *";
+        '$role_id',) RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
         $num = $result->rowCount();
@@ -152,12 +128,8 @@ class UserDetail
                 $data_item = array(
                     'id' => $id,
                     'user_id' => $user_id,
-                    'user_name' => $user_name,
                     'unit_id' => $unit_id,
-                    'unit_code' => $unit_code,
-                    'unit_name' => $unit_name,
                     'role_id' => $role_id,
-                    'role_name' => $role_name,
                     'user_avatar'=>$user_avatar,
                 );
 
@@ -181,14 +153,10 @@ class UserDetail
 
         $request = json_decode($data);
         $user_id = $request[0]->user_id;
-        $user_name = $request[0]->user_name;
         $unit_id = $request[0]->unit_id;
-        $unit_code = $request[0]->unit_code;
-        $unit_name = $request[0]->unit_name;
         $role_id = $request[0]->role_id;
-        $role_name = $request[0]->role_name;
 
-        $query = "UPDATE $tablename SET user_id = '$user_id', user_name = '$user_name', unit_id = '$unit_id', unit_code = '$unit_code', unit_name = '$unit_name', role_id = '$role_id', role_name = '$role_name' WHERE id = '$id' RETURNING *";
+        $query = "UPDATE $tablename SET user_id = '$user_id', unit_id = '$unit_id', role_id = '$role_id' WHERE id = '$id' RETURNING *";
 
         // die($query);
 
@@ -208,12 +176,8 @@ class UserDetail
                 $data_item = array(
                     'id' => $id,
                     'user_id' => $user_id,
-                    'user_name' => $user_name,
                     'unit_id' => $unit_id,
-                    'unit_code' => $unit_code,
-                    'unit_name' => $unit_name,
                     'role_id' => $role_id,
-                    'role_name' => $role_name,
                     
                 );
 
@@ -236,15 +200,11 @@ class UserDetail
 
         $request = json_decode($data);
         $user_id = $request[0]->user_id;
-        $user_name = $request[0]->user_name;
         $unit_id = $request[0]->unit_id;
-        $unit_code = $request[0]->unit_code;
-        $unit_name = $request[0]->unit_name;
         $role_id = $request[0]->role_id;
-        $role_name = $request[0]->role_name;
         $user_avatar = $request[0]->user_avatar;
 
-        $query = "UPDATE $tablename SET user_id = '$user_id', user_name = '$user_name', unit_id = '$unit_id', unit_code = '$unit_code', unit_name = '$unit_name', role_id = '$role_id', role_name = '$role_name', user_avatar = '$user_avatar' WHERE user_id = '$user_id' RETURNING *";
+        $query = "UPDATE $tablename SET user_id = '$user_id', unit_id = '$unit_id', role_id = '$role_id', user_avatar = '$user_avatar' WHERE user_id = '$user_id' RETURNING *";
 
         // die($query);
 
@@ -264,12 +224,8 @@ class UserDetail
                 $data_item = array(
                     'id' => $id,
                     'user_id' => $user_id,
-                    'user_name' => $user_name,
                     'unit_id' => $unit_id,
-                    'unit_code' => $unit_code,
-                    'unit_name' => $unit_name,
                     'role_id' => $role_id,
-                    'role_name' => $role_name,
                     'user_avatar' => $user_avatar,
                 );
 

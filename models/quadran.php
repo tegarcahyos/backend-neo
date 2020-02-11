@@ -1,6 +1,6 @@
 <?php
 
-class CeoNotes
+class Quadran
 {
     public $db;
 
@@ -26,7 +26,8 @@ class CeoNotes
 
                 $data_item = array(
                     'id' => $id,
-                    'data' => json_decode($data),
+                    'user_id' => $user_id,
+                    'program_charter' => $program_charter,
                 );
 
                 array_push($data_arr, $data_item);
@@ -55,7 +56,8 @@ class CeoNotes
 
             $data_item = array(
                 'id' => $id,
-                'data' => json_decode($data),
+                'user_id' => $user_id,
+                'program_charter' => $program_charter,
             );
 
             $msg = $data_item;
@@ -63,49 +65,28 @@ class CeoNotes
         }
     }
 
-    public function getByValues($attr, $val, $tablename)
+    public function findByUserId($user_id, $tablename)
     {
-
-        $query = "SELECT * FROM $tablename WHERE ";
-        $values = explode('AND', $val);
-        $attr = explode('AND', $attr);
-        for ($i = 0; $i < count($attr); $i++) {
-            if ($i == 0) {
-
-            } else {
-                $query .= " AND ";
-            }
-            // $query .= "values @> '{\"" . $attr[$i] . "\": \"" . $values[$i] . "\"}'";
-            $query .= "values ->> '" . $attr[$i] . "' = '" . $values[$i] . "'";
-
-        }
-
-        $query_real = str_replace("%20", " ", $query);
-        die($query_real);
-        $result = $this->db->execute($query_real);
-
-        $num = $result->rowCount();
-
-        if ($num > 0) {
-            $data_arr = array();
-
-            while ($row = $result->fetchRow()) {
-                extract($row);
-                $data_item = array(
-                    'id' => $id,
-                    'name' => $name,
-                    'values' => json_decode($values),
-                );
-
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
-            }
-
+        $query = "SELECT * FROM $tablename WHERE user_id = '$user_id'";
+        $result = $this->db->execute($query);
+        if (empty($result)) {
+            $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
+            return $msg;
         } else {
-            $msg = 'Data Kosong';
-        }
+            $row = $result->fetchRow();
+            extract($row);
 
-        return $msg;
+            // Push to data_arr
+
+            $data_item = array(
+                'id' => $id,
+                'user_id' => $user_id,
+                'program_charter' => $program_charter,
+            );
+
+            $msg = $data_item;
+            return $msg;
+        }
     }
 
     public function insert($tablename)
@@ -113,7 +94,8 @@ class CeoNotes
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $variable = array('data');
+
+        $variable = array('user_id', 'program_charter');
         foreach ($variable as $item) {
             if (!isset($request[0]->{$item})) {
                 return "402";
@@ -122,10 +104,8 @@ class CeoNotes
             $$item = $request[0]->{$item};
         }
 
-        $data = json_encode($data);
-
-        $query = 'INSERT INTO ' . $tablename . ' (data) ';
-        $query .= "VALUES ('$data') RETURNING *";
+        $query = 'INSERT INTO ' . $tablename . ' (user_id, program_charter) ';
+        $query .= "VALUES ('$user_id', '$program_charter') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
         if (empty($result)) {
@@ -145,7 +125,8 @@ class CeoNotes
 
                     $data_item = array(
                         'id' => $id,
-                        'data' => json_decode($data),
+                        'user_id' => $user_id,
+                        'program_charter' => $program_charter,
                     );
 
                     array_push($data_arr, $data_item);
@@ -166,8 +147,7 @@ class CeoNotes
         $data = file_get_contents("php://input");
 
         $request = json_decode($data);
-
-        $variable = array('data');
+        $variable = array('user_id', 'program_charter');
         foreach ($variable as $item) {
             if (!isset($request[0]->{$item})) {
                 return "402";
@@ -176,9 +156,7 @@ class CeoNotes
             $$item = $request[0]->{$item};
         }
 
-        $data = json_encode($data);
-
-        $query = "UPDATE $tablename SET data = '$data' WHERE id = '$id' RETURNING *";
+        $query = "UPDATE $tablename SET user_id = '$user_id', program_charter = '$program_charter' WHERE id = '$id' RETURNING *";
 
         // die($query);
 
@@ -200,7 +178,8 @@ class CeoNotes
 
                     $data_item = array(
                         'id' => $id,
-                        'data' => json_decode($data),
+                        'user_id' => $user_id,
+                        'program_charter' => $program_charter,
                     );
 
                     array_push($data_arr, $data_item);
@@ -228,24 +207,19 @@ class CeoNotes
         }
     }
 
-    public function deleteByValues($attr, $val, $tablename)
+    public function deleteByUserId($user_id, $tablename)
     {
+        $query = "DELETE FROM $tablename WHERE user_id = '$user_id'";
 
-        $condition_values = explode('AND', $val);
-        $condition_attr = explode('AND', $attr);
-        $query = "DELETE FROM  $tablename";
-        for ($i = 0; $i < count($condition_attr); $i++) {
-            if ($i == 0) {
+        $result = $this->db->execute($query);
+        // return $result;
+        $res = $this->db->affected_rows();
 
-            } else {
-                $query .= " AND ";
-            }
-            $query .= "values @> '{\"" . $condition_attr[$i] . "\": \"" . $condition_values[$i] . "\"}'";
-
+        if ($res == true) {
+            return $msg = array("message" => 'Data Berhasil Dihapus', "code" => 200);
+        } else {
+            return $msg = array("message" => 'Data tidak ditemukan', "code" => 400);
         }
-        $query_real = str_replace("%20", " ", $query);
-        // die($query_real);
-        return $this->db->execute($query_real);
     }
 
 }

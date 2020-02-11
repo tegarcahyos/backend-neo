@@ -118,44 +118,49 @@ class Matrix
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
+        $variable = array('si_id', 'unit_id', 'matrix');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
 
-        $si_id = $request[0]->si_id;
-        $unit_id = $request[0]->unit_id;
-        $matrix = $request[0]->matrix;
+            $$item = $request[0]->{$item};
+        }
 
         $query = 'INSERT INTO ' . $tablename . ' (si_id, unit_id, matrix) ';
         $query .= "VALUES ('$si_id','$unit_id', '$matrix') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-        $num = $result->rowCount();
+        if (empty($result)) {
+            return "402";
+        } else {
+            $num = $result->rowCount();
 
-        // jika ada hasil
-        if ($num > 0) {
+            // jika ada hasil
+            if ($num > 0) {
 
-            $data_arr = array();
+                $data_arr = array();
 
-            while ($row = $result->fetchRow()) {
-                extract($row);
+                while ($row = $result->fetchRow()) {
+                    extract($row);
 
-                // Push to data_arr
+                    // Push to data_arr
 
-                $data_item = array(
-                    'id' => $id,
-                    'si_id' => $si_id,
-                    'unit_id' => $unit_id,
-                    'matrix' => $matrix,
-                );
+                    $data_item = array(
+                        'id' => $id,
+                        'si_id' => $si_id,
+                        'unit_id' => $unit_id,
+                        'matrix' => $matrix,
+                    );
 
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
             }
 
-        } else {
-            $msg = 'Data Kosong';
+            return $msg;
+
         }
-
-        return $msg;
-
     }
 
     public function update($id, $tablename)
@@ -165,43 +170,50 @@ class Matrix
         $data = file_get_contents("php://input");
 
         $request = json_decode($data);
-        $si_id = $request[0]->si_id;
-        $unit_id = $request[0]->unit_id;
-        $matrix = $request[0]->matrix;
+
+        $variable = array('si_id', 'unit_id', 'matrix');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
+
+            $$item = $request[0]->{$item};
+        }
 
         $query = "UPDATE $tablename SET si_id = '$si_id', unit_id = '$unit_id',matrix = '$matrix' WHERE id = '$id' RETURNING *";
 
-        // die($query);
-
         $result = $this->db->execute($query);
-        $num = $result->rowCount();
+        if (empty($result)) {
+            return "402";
+        } else {
+            $num = $result->rowCount();
 
-        // jika ada hasil
-        if ($num > 0) {
+            // jika ada hasil
+            if ($num > 0) {
 
-            $data_arr = array();
+                $data_arr = array();
 
-            while ($row = $result->fetchRow()) {
-                extract($row);
+                while ($row = $result->fetchRow()) {
+                    extract($row);
 
-                // Push to data_arr
+                    // Push to data_arr
 
-                $data_item = array(
-                    'id' => $id,
-                    'si_id' => $si_id,
-                    'unit_id' => $unit_id,
-                    'matrix' => $matrix,
-                );
+                    $data_item = array(
+                        'id' => $id,
+                        'si_id' => $si_id,
+                        'unit_id' => $unit_id,
+                        'matrix' => $matrix,
+                    );
 
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
             }
 
-        } else {
-            $msg = 'Data Kosong';
+            return $msg;
         }
 
-        return $msg;
     }
 
     public function delete($id, $tablename)

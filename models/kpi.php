@@ -177,32 +177,46 @@ class Kpi
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $name = $request[0]->name;
-        $metric = $request[0]->metric;
-        $status = $request[0]->status;
-        $parent_id = $request[0]->parent_id;
+        $variable = array('name', 'metric', 'status', 'parent_id');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
+
+            $$item = $request[0]->{$item};
+        }
 
         $query = "INSERT INTO $tablename (name, metric, status, parent_id)";
         $query .= "VALUES ('$name', '$metric', '$status', '$parent_id') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-        $row = $result->fetchRow();
-        if (is_bool($row)) {
-            $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
-            return $msg;
+        if (empty($result)) {
+            return "402";
         } else {
-            extract($row);
+            $num = $result->rowCount();
 
-            $data_item = array(
-                'id' => $id,
-                'name' => $name,
-                'metric' => $metric,
-                'status' => $status,
-                'parent_id' => $parent_id,
-            );
-            return $data_item;
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+                    // ambil parent parentnya pake $parent_id
+                    $data_item = array(
+                        'id' => $id,
+                        'name' => $name,
+                        'metric' => $metric,
+                        'status' => $status,
+                        'parent_id' => $parent_id,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+            }
         }
 
+        return $msg;
     }
 
     public function update($id, $tablename)
@@ -211,30 +225,47 @@ class Kpi
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $name = $request[0]->name;
-        $metric = $request[0]->metric;
-        $status = $request[0]->status;
-        $parent_id = $request[0]->parent_id;
+        $variable = array('name', 'metric', 'status', 'parent_id');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
 
-        $query = "UPDATE $tablename SET name = '$name', metric = '$metric', status = '$status', parent_id = '$parent_id' WHERE id = '$id'";
+            $$item = $request[0]->{$item};
+        }
+
+        $query = "UPDATE $tablename SET name = '$name', metric = '$metric', status = '$status', parent_id = '$parent_id' WHERE id = '$id' RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-        $row = $result->fetchRow();
         if (is_bool($row)) {
-            $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
-            return $msg;
+            return "402";
         } else {
-            extract($row);
+            $num = $result->rowCount();
 
-            $data_item = array(
-                'id' => $id,
-                'name' => $name,
-                'metric' => $metric,
-                'status' => $status,
-                'parent_id' => $parent_id,
-            );
-            return $data_item;
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+                    // ambil parent parentnya pake $parent_id
+                    $this->getParentKpiBy($parent_id);
+                    $data_item = array(
+                        'id' => $id,
+                        'name' => $name,
+                        'metric' => $metric,
+                        'status' => $status,
+                        'parent_id' => $parent_id,
+                        'parent_list' => $this->parentArray,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+            }
         }
+
+        return $msg;
     }
 
     public function delete($id, $tablename)

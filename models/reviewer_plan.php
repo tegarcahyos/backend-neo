@@ -1,6 +1,6 @@
 <?php
 
-class CeoNotes
+class ReviewerPlan
 {
     public $db;
 
@@ -27,6 +27,7 @@ class CeoNotes
                 $data_item = array(
                     'id' => $id,
                     'data' => json_decode($data),
+                    'name' => $name,
                 );
 
                 array_push($data_arr, $data_item);
@@ -56,6 +57,7 @@ class CeoNotes
             $data_item = array(
                 'id' => $id,
                 'data' => json_decode($data),
+                'name' => $name,
             );
 
             $msg = $data_item;
@@ -63,57 +65,13 @@ class CeoNotes
         }
     }
 
-    public function getByValues($attr, $val, $tablename)
-    {
-
-        $query = "SELECT * FROM $tablename WHERE ";
-        $values = explode('AND', $val);
-        $attr = explode('AND', $attr);
-        for ($i = 0; $i < count($attr); $i++) {
-            if ($i == 0) {
-
-            } else {
-                $query .= " AND ";
-            }
-            // $query .= "values @> '{\"" . $attr[$i] . "\": \"" . $values[$i] . "\"}'";
-            $query .= "values ->> '" . $attr[$i] . "' = '" . $values[$i] . "'";
-
-        }
-
-        $query_real = str_replace("%20", " ", $query);
-        die($query_real);
-        $result = $this->db->execute($query_real);
-
-        $num = $result->rowCount();
-
-        if ($num > 0) {
-            $data_arr = array();
-
-            while ($row = $result->fetchRow()) {
-                extract($row);
-                $data_item = array(
-                    'id' => $id,
-                    'name' => $name,
-                    'values' => json_decode($values),
-                );
-
-                array_push($data_arr, $data_item);
-                $msg = $data_arr;
-            }
-
-        } else {
-            $msg = 'Data Kosong';
-        }
-
-        return $msg;
-    }
-
     public function insert($tablename)
     {
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $variable = array('data');
+
+        $variable = array('name', 'data');
         foreach ($variable as $item) {
             if (!isset($request[0]->{$item})) {
                 return "402";
@@ -124,8 +82,8 @@ class CeoNotes
 
         $data = json_encode($data);
 
-        $query = 'INSERT INTO ' . $tablename . ' (data) ';
-        $query .= "VALUES ('$data') RETURNING *";
+        $query = 'INSERT INTO ' . $tablename . ' (data, name) ';
+        $query .= "VALUES ('$data', '$name') RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
         if (empty($result)) {
@@ -146,6 +104,7 @@ class CeoNotes
                     $data_item = array(
                         'id' => $id,
                         'data' => json_decode($data),
+                        'name' => $name,
                     );
 
                     array_push($data_arr, $data_item);
@@ -166,8 +125,7 @@ class CeoNotes
         $data = file_get_contents("php://input");
 
         $request = json_decode($data);
-
-        $variable = array('data');
+        $variable = array('name', 'data');
         foreach ($variable as $item) {
             if (!isset($request[0]->{$item})) {
                 return "402";
@@ -178,7 +136,7 @@ class CeoNotes
 
         $data = json_encode($data);
 
-        $query = "UPDATE $tablename SET data = '$data' WHERE id = '$id' RETURNING *";
+        $query = "UPDATE $tablename SET data = '$data', name = '$name' WHERE id = '$id' RETURNING *";
 
         // die($query);
 
@@ -201,6 +159,7 @@ class CeoNotes
                     $data_item = array(
                         'id' => $id,
                         'data' => json_decode($data),
+                        'name' => $name,
                     );
 
                     array_push($data_arr, $data_item);
@@ -226,26 +185,6 @@ class CeoNotes
         } else {
             return $msg = array("message" => 'Data tidak ditemukan', "code" => 400);
         }
-    }
-
-    public function deleteByValues($attr, $val, $tablename)
-    {
-
-        $condition_values = explode('AND', $val);
-        $condition_attr = explode('AND', $attr);
-        $query = "DELETE FROM  $tablename";
-        for ($i = 0; $i < count($condition_attr); $i++) {
-            if ($i == 0) {
-
-            } else {
-                $query .= " AND ";
-            }
-            $query .= "values @> '{\"" . $condition_attr[$i] . "\": \"" . $condition_values[$i] . "\"}'";
-
-        }
-        $query_real = str_replace("%20", " ", $query);
-        // die($query_real);
-        return $this->db->execute($query_real);
     }
 
 }

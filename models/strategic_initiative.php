@@ -98,6 +98,7 @@ class StraIn
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
+                    'periode_id' => $periode_id,
                     'parent_list' => $this->parentArray,
                 );
 
@@ -137,7 +138,7 @@ class StraIn
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
-                    'periode_id' => $periode_id
+                    'periode_id' => $periode_id,
                 );
 
                 array_push($data_arr, $data_item);
@@ -159,7 +160,8 @@ class StraIn
                 0               AS number_of_ancestors,
                parent_id,
                code,
-               name
+               name,
+               periode_id
             FROM  $tablename where id = '$id'
            UNION
             SELECT
@@ -167,7 +169,8 @@ class StraIn
                c.number_of_ancestors + 1                   AS ancestry_size,
                tp.parent_id,
                tp.code,
-               tp.name
+               tp.name,
+               tp.periode_id
             FROM  $tablename tp
             JOIN children c ON tp.parent_id::text = c.id::text
            )
@@ -188,6 +191,7 @@ class StraIn
                     'name' => $name,
                     'code' => $code,
                     'parent_id' => $parent_id,
+                    'periode_id' => $periode_id,
                 );
 
                 array_push($data_arr, $data_item);
@@ -217,6 +221,7 @@ class StraIn
                 'name' => $name,
                 'code' => $code,
                 'parent_id' => $parent_id,
+                'periode_id' => $periode_id,
             );
             return $data_item;
         }
@@ -245,6 +250,7 @@ class StraIn
                     'parent_id' => $parent_id,
                     'name' => $name,
                     'code' => $code,
+                    'periode_id' => $periode_id,
                 );
 
                 array_push($data_arr, $data_item);
@@ -265,24 +271,47 @@ class StraIn
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $name = $request[0]->name;
-        $code = $request[0]->code;
-        $parent_id = $request[0]->parent_id;
-        $periode_id = $request[0]->periode_id;
-        $query = "INSERT INTO $tablename (name, code, parent_id,periode_id)";
-        $query .= "VALUES ('$name', '$code', '$parent_id','$periode_id')";
-        // die($query);
-        $result = $this->db->execute($query);
-        $num = $result->rowCount();
 
-        $res = $this->db->affected_rows();
+        $variable = array('name', 'code', 'parent_id', 'periode_id');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
 
-        if ($res == true) {
-            return $msg = array("message" => 'Data Berhasil Ditambah', "code" => 200);
-        } else {
-            return $msg = array("message" => 'Data tidak ditemukan', "code" => 400);
+            $$item = $request[0]->{$item};
         }
 
+        $query = "INSERT INTO $tablename (name, code, parent_id,periode_id)";
+        $query .= "VALUES ('$name', '$code', '$parent_id','$periode_id') RETURNING *";
+        // die($query);
+        $result = $this->db->execute($query);
+        if (empty($result)) {
+            return "402";
+        } else {
+            $num = $result->rowCount();
+
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    $data_item = array(
+                        'id' => $id,
+                        'name' => $name,
+                        'code' => $code,
+                        'parent_id' => $parent_id,
+                        'periode_id' => $periode_id,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
+        }
+        return $msg;
     }
 
     public function update($id, $tablename)
@@ -291,22 +320,45 @@ class StraIn
         $data = file_get_contents("php://input");
         //
         $request = json_decode($data);
-        $name = $request[0]->name;
-        $code = $request[0]->code;
-        $parent_id = $request[0]->parent_id;
-        $periode_id = $request[0]->periode_id;
+        $variable = array('name', 'code', 'parent_id', 'periode_id');
+        foreach ($variable as $item) {
+            if (!isset($request[0]->{$item})) {
+                return "402";
+            }
 
-        $query = "UPDATE $tablename SET name = '$name', code = '$code', parent_id = '$parent_id', periode_id = '$periode_id' WHERE id = '$id'";
+            $$item = $request[0]->{$item};
+        }
+
+        $query = "UPDATE $tablename SET name = '$name', code = '$code', parent_id = '$parent_id', periode_id = '$periode_id' WHERE id = '$id' RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
-
-        $res = $this->db->affected_rows();
-
-        if ($res == true) {
-            return $msg = array("message" => 'Data berhasil diperbaharui', "code" => 200);
+        if (empty($result)) {
+            return "402";
         } else {
-            return $msg = array("message" => 'Data tidak ditemukan', "code" => 400);
+            $num = $result->rowCount();
+
+            if ($num > 0) {
+
+                $data_arr = array();
+
+                while ($row = $result->fetchRow()) {
+                    extract($row);
+
+                    $data_item = array(
+                        'id' => $id,
+                        'name' => $name,
+                        'code' => $code,
+                        'parent_id' => $parent_id,
+                        'periode_id' => $periode_id,
+                    );
+
+                    array_push($data_arr, $data_item);
+                    $msg = $data_arr;
+                }
+
+            }
         }
+        return $msg;
     }
 
     public function delete($id, $tablename)

@@ -5,6 +5,8 @@ include "models/organization.php";
 include "models/unit.php";
 include "models/user.php";
 include "models/role.php";
+include "models/employee.php";
+include "models/notification.php";
 include "models/attachment.php";
 include "models/group_chat.php";
 include "models/group_member.php";
@@ -30,6 +32,7 @@ include "models/reviewer_plan.php";
 include "models/quadran.php";
 include "models/periode.php";
 include "models/tara.php";
+include "models/help.php";
 include "login.php";
 if (file_exists('settings.php')) {
     include 'settings.php';
@@ -251,6 +254,10 @@ class Router
             $r->post('/api/index.php/main_program/insert', 'MainProgram/insert');
             $r->post('/api/index.php/main_program/update/{id}', 'MainProgram/update');
 
+            //Employee
+            $r->get('/api/index.php/employee/get', 'Employee/get');
+            $r->get('/api/index.php/employee/find/{value}', 'Employee/find');
+
             // Approval
             $r->get('/api/index.php/approval/get', 'Approval/get');
             $r->get('/api/index.php/approval/find_id/{id}', 'Approval/findById');
@@ -350,12 +357,23 @@ class Router
             $r->post('/api/index.php/unit_target/insert', 'UnitTarget/insert');
             $r->post('/api/index.php/unit_target/update/{id}', 'UnitTarget/update');
 
+            // NOTIFICATION
+            $r->get('/api/index.php/log_notification/read_notification/{id}', 'Notification/readNotification');
+            $r->get('/api/index.php/log_notification/check_notif/{id}', 'Notification/checkNotif');
+
             // ORGANIZATION
             $r->get('/api/index.php/organization/get', 'Organization/get');
             $r->get('/api/index.php/organization/find_id/{id}', 'Organization/findById');
             $r->get('/api/index.php/organization/delete/{id}', 'Organization/delete');
             $r->post('/api/index.php/organization/insert', 'Organization/insert');
             $r->post('/api/index.php/organization/update/{id}', 'Organization/update');
+
+            // HELP
+            $r->get('/api/index.php/help/get', 'Help/get');
+            $r->get('/api/index.php/help/find_id/{id}', 'Help/findById');
+            $r->get('/api/index.php/help/delete/{id}', 'Help/delete');
+            $r->post('/api/index.php/help/insert', 'Help/insert');
+            $r->post('/api/index.php/help/update/{id}', 'Help/update');
 
             // UNIT
             $r->get('/api/index.php/unit/get', 'Unit/get');
@@ -527,6 +545,7 @@ class Router
                     $explodeUri[4] == "select_attachment" ||
                     $explodeUri[4] == "select" ||
                     $explodeUri[4] == "find_id" ||
+                    $explodeUri[4] == "check_notif" ||
                     $explodeUri[4] == "select_group_chat" ||
                     $explodeUri[4] == "get_layout" ||
                     $explodeUri[4] == "update" ||
@@ -541,7 +560,8 @@ class Router
                     $explodeUri[4] == "update_id" ||
                     $explodeUri[4] == "select_id_get" ||
                     $explodeUri[4] == "get_root_parent" ||
-                    $explodeUri[4] == "get_leaf_by_root_id"
+                    $explodeUri[4] == "get_leaf_by_root_id" ||
+                    $explodeUri[4] == "read_notification"
                 ) {
                     $result = call_user_func_array(array(new $class($connection), $method), array($vars['id'], $explodeUri[3]));
                 } else if (
@@ -615,12 +635,14 @@ class Router
         try {
             if ($result == [] || $result === 'Data Kosong' || $result == '0') {
                 $this->msg(http_response_code(404), 404, $result, "gagal", 0);
+            } else if ($result == "402") {
+                $this->msg(http_response_code(402), 402, 'Incomplete Data', "gagal", 0);
+            } else if ($result == "403") {
+                $this->msg(http_response_code(403), 403, 'You Can\'t Delete This Data ', "gagal", 0);
             } else if ($result == "404") {
                 $this->msg(http_response_code(404), 404, 'Page Not Found', "gagal", 0);
             } else if ($result == "405") {
                 $this->msg(http_response_code(405), 405, 'Method Not Allowed', "gagal", 0);
-            } else if ($result == "403") {
-                $this->msg(http_response_code(403), 403, 'You Can\'t Delete This Data ', "gagal", 0);
             } else {
                 $this->msg(http_response_code(200), 200, $result, "berhasil", 1);
             }
