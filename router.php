@@ -44,7 +44,7 @@ if (file_exists('settings.php')) {
 } else {
     define('db_username', 'pmo');
     define('db_password', 'pass4pmo');
-    define('db_name1', "core");
+    define('db_name1', "neotransformer");
     define("db_host", "10.62.161.10");
     define("db_port", "5432");
 }
