@@ -183,7 +183,6 @@ class UserDetail
                     'user_id' => $user_id,
                     'unit_id' => $unit_id,
                     'role_id' => $role_id,
-
                 );
 
                 array_push($data_arr, $data_item);

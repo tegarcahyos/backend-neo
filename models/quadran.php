@@ -197,7 +197,7 @@ class Quadran
         $query = "DELETE FROM $tablename WHERE id = '$id'";
 
         $result = $this->db->execute($query);
-        
+
         // return $result;
         $res = $this->db->affected_rows();
 

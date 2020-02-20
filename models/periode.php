@@ -195,10 +195,18 @@ class Periode
                 $msg = $data_arr;
             }
 
-        } else {
-            $msg = '0';
+            $activate = "UPDATE $tablename SET name = '$name',  code = '$code' ,organization_id = '$organization_id', status_active = '$status_active' WHERE id = '$idP' RETURNING *";
+            // die($activate);
+            $result = $this->db->execute($activate);
+            $row = $result->fetchRow();
+            if (is_bool($row)) {
+                $msg = array("message" => 'Data Tidak Ditemukan', "code" => 400);
+                return $msg;
+            } else {
+                $msg = '0';
+            }
+            return $msg;
         }
-        return $msg;
     }
 
     public function delete($id, $tablename)

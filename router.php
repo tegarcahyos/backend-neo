@@ -5,7 +5,10 @@ include "models/organization.php";
 include "models/unit.php";
 include "models/user.php";
 include "models/role.php";
+<<<<<<< HEAD
 include "models/stakeholders.php";
+=======
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
 include "models/employee.php";
 include "models/notification.php";
 include "models/attachment.php";
@@ -14,7 +17,10 @@ include "models/group_member.php";
 include "models/group_message.php";
 include "models/user_login.php";
 include "models/cfu_fu.php";
+<<<<<<< HEAD
 include "models/request_account.php";
+=======
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
 include "models/matrix.php";
 include "models/strategic_initiative.php";
 include "models/main_program.php";
@@ -86,6 +92,7 @@ class Router
             $array = array(
                 'type' => $type,
                 'error_msg' => $msg,
+<<<<<<< HEAD
                 'keterangan' => $keterangan . '',
                 'status' => $status,
             );
@@ -94,6 +101,8 @@ class Router
             $array = array(
                 'type' => $type,
                 'error_msg' => $msg,
+=======
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
                 'keterangan' => $keterangan . '',
                 'status' => $status,
             );
@@ -220,6 +229,7 @@ class Router
             $r->post('/api/index.php/users/insert', 'User/insert');
             $r->post('/api/index.php/users/update/{id}', 'User/update');
 
+<<<<<<< HEAD
             // Stakeholders
             $r->get('/api/index.php/stakeholders/get', 'Stakeholders/get');
             $r->get('/api/index.php/stakeholders/find_id/{id}', 'Stakeholders/findById');
@@ -235,6 +245,8 @@ class Router
             $r->post('/api/index.php/request_account/insert', 'RequestAccount/insert');
             $r->post('/api/index.php/request_account/update/{id}', 'RequestAccount/update');
 
+=======
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
             // --- EXPERT JUDGEMENT ---
             $r->get('/api/index.php/expert_judgement/get', 'ExpertJudgement/get');
             $r->get('/api/index.php/expert_judgement/find_id/{id}', 'ExpertJudgement/findById');
@@ -332,8 +344,11 @@ class Router
 
             // CFU FU
             $r->get('/api/index.php/cfu_fu/get', 'CfuFu/get');
+<<<<<<< HEAD
             $r->get('/api/index.php/cfu_fu/get_users/{id}', 'CfuFu/getAllUsers');
             $r->get('/api/index.php/cfu_fu/get_units/{id}', 'CfuFu/getAllUnits');
+=======
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
             $r->get('/api/index.php/cfu_fu/find_id/{id}', 'CfuFu/findById');
             $r->get('/api/index.php/cfu_fu/get_by_organization/{org_id}', 'CfuFu/findByOrgId');
             $r->get('/api/index.php/cfu_fu/delete/{id}', 'CfuFu/delete');
@@ -595,11 +610,14 @@ class Router
                     $explodeUri[4] == "select_attachment" ||
                     $explodeUri[4] == "select" ||
                     $explodeUri[4] == "find_id" ||
+<<<<<<< HEAD
                     $explodeUri[4] == "get_by_cfu" ||
                     $explodeUri[4] == "get_by_root" ||
                     $explodeUri[4] == "get_users" ||
                     $explodeUri[4] == "get_units" ||
                     $explodeUri[4] == "find_unit_id" ||
+=======
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
                     $explodeUri[4] == "check_notif" ||
                     $explodeUri[4] == "select_group_chat" ||
                     $explodeUri[4] == "get_layout" ||
@@ -616,8 +634,12 @@ class Router
                     $explodeUri[4] == "select_id_get" ||
                     $explodeUri[4] == "get_root_parent" ||
                     $explodeUri[4] == "get_leaf_by_root_id" ||
+<<<<<<< HEAD
                     $explodeUri[4] == "read_notification" ||
                     $explodeUri[4] == "get_by_criteria"
+=======
+                    $explodeUri[4] == "read_notification"
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
                 ) {
                     $result = call_user_func_array(array(new $class($connection), $method), array($vars['id'], $explodeUri[3]));
                 } else if (
@@ -697,18 +719,28 @@ class Router
         try {
             if ($result == [] || $result === "Data Kosong" || $result == '0') {
                 $this->msg(http_response_code(404), 404, $result, "gagal", 0);
+<<<<<<< HEAD
             } else if ($result == "422") {
                 $this->msg(http_response_code(422), 422, 'Incomplete Data', "gagal", 0);
             } else if ($result == "403") {
                 $this->msg(http_response_code(403), 403, 'You Can\'t Delete This Data ', "gagal", 0);
             } else if ($result == "203") {
                 $this->msg(http_response_code(203), 203, 'Account Not Found', "gagal", 0);
+=======
+            } else if ($result == "402") {
+                $this->msg(http_response_code(402), 402, 'Incomplete Data', "gagal", 0);
+            } else if ($result == "403") {
+                $this->msg(http_response_code(403), 403, 'You Can\'t Delete This Data ', "gagal", 0);
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
             } else if ($result == "404") {
                 $this->msg(http_response_code(404), 404, 'Page Not Found', "gagal", 0);
             } else if ($result == "405") {
                 $this->msg(http_response_code(405), 405, 'Method Not Allowed', "gagal", 0);
+<<<<<<< HEAD
             } else if ($result == "506") {
                 $this->msg(http_response_code(506), 506, 'Wrong Password', "gagal", 0);
+=======
+>>>>>>> bcc98410f20470050044113ca34f7fbfe7a606bb
             } else {
                 $this->msg(http_response_code(200), 200, $result, "berhasil", 1);
             }
