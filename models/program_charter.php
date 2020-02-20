@@ -194,6 +194,7 @@ class ProgramCharter
                             'risks' => $risks,
                             'status' => $status,
                             'generator_id' => $generator_id,
+                            'type' => $type,
                         );
 
                         array_push($pcArray, $data_item);
@@ -244,6 +245,7 @@ class ProgramCharter
                 'risks' => $risks,
                 'status' => $status,
                 'generator_id' => $generator_id,
+                'type' => $type,
             );
             return $data_item;
         }
@@ -269,6 +271,7 @@ class ProgramCharter
         $risks = $request[0]->risks;
         $status = $request[0]->status;
         $generator_id = $request[0]->generator_id;
+        $type = $request[0]->type;
 
         if (empty($weight)) {
             $weight = 'NULL';
@@ -326,7 +329,7 @@ class ProgramCharter
             NULLIF('$risks', 'NULL'),
             '$status',
             '$generator_id',
-            'BTP';
+            '$type';
             ) RETURNING *";
         // die($query);
         $result = $this->db->execute($query);
@@ -358,6 +361,7 @@ class ProgramCharter
                     'risks' => $risks,
                     'status' => $status,
                     'generator_id' => $generator_id,
+                    'type' => $type,
                 );
 
                 array_push($data_arr, $data_item);
@@ -458,7 +462,7 @@ class ProgramCharter
         $risks = $request[0]->risks;
         $status = $request[0]->status;
         $generator_id = $request[0]->generator_id;
-        $type = 'BTP';
+        $type = $request[0]->$type;
 
         if (empty($description)) {
             $description = 'NULL';
