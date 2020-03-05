@@ -90,6 +90,7 @@ class Milestone
         if (empty($result)) {
             return "422";
         }else{
+            $num = $result->rowCount();
             if ($num > 0) {
 
                 $data_arr = array();
