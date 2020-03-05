@@ -16,6 +16,7 @@ include "models/user_login.php";
 include "models/cfu_fu.php";
 include "models/request_account.php";
 include "models/matrix.php";
+include "models/milestone.php";
 include "models/strategic_initiative.php";
 include "models/main_program.php";
 include "models/program_charter.php";
@@ -219,6 +220,13 @@ class Router
             $r->get('/apineo/index.php/users/delete/{id}', 'User/delete');
             $r->post('/apineo/index.php/users/insert', 'User/insert');
             $r->post('/apineo/index.php/users/update/{id}', 'User/update');
+
+            // --- MILESTONE ---
+            $r->get('/apineo/index.php/milestone/get', 'Milestone/get');
+            $r->get('/apineo/index.php/milestone/find_id/{id}', 'Milestone/findById');
+            $r->get('/apineo/index.php/milestone/delete/{id}', 'Milestone/delete');
+            $r->post('/apineo/index.php/milestone/insert', 'Milestone/insert');
+            $r->post('/apineo/index.php/milestone/update/{id}', 'Milestone/update');
 
             // Stakeholders
             $r->get('/apineo/index.php/stakeholders/get', 'Stakeholders/get');
