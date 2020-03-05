@@ -130,7 +130,7 @@ class Milestone
             $$item = $request[0]->{$item};
         }
 
-        $query = "UPDATE $tablename SET name = '$name', description = '$description' WHERE id = '$id'";
+        $query = "UPDATE $tablename SET name = '$name', weight = '$weight', start_date = '$start_date', end_date = '$end_date', description = '$description' WHERE id = '$id'";
         // die($query);
         return $this->db->execute($query);
     }
